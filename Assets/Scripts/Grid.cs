@@ -12,7 +12,7 @@ public class Grid : VisualElement
         UxmlIntAttributeDescription _columns = new UxmlIntAttributeDescription { name = "columns", defaultValue = 8 };
         UxmlIntAttributeDescription _rows = new UxmlIntAttributeDescription { name = "rows", defaultValue = 14 };
         UxmlColorAttributeDescription _slotColour = new UxmlColorAttributeDescription { name = "slot-colour", defaultValue = Color.grey };
-        UxmlIntAttributeDescription _border = new UxmlIntAttributeDescription { name = "border", defaultValue = 1 };
+        UxmlIntAttributeDescription _border = new UxmlIntAttributeDescription { name = "border", defaultValue = 2 };
         UxmlColorAttributeDescription _borderColour = new UxmlColorAttributeDescription { name = "border-colour", defaultValue = Color.black };
 
         public override IEnumerable<UxmlChildElementDescription> uxmlChildElementsDescription
@@ -32,7 +32,7 @@ public class Grid : VisualElement
             grid.SlotColour = _slotColour.GetValueFromBag(attributeBag, creationContext);
             grid.Border = _border.GetValueFromBag(attributeBag, creationContext);
             grid.BorderColour = _borderColour.GetValueFromBag(attributeBag, creationContext);
-            grid.Add(grid.CreateGUI());
+            grid.CreateGUI();
         }
     }
 
@@ -42,19 +42,16 @@ public class Grid : VisualElement
     public int Border { get; set; }
     public Color BorderColour { get; set; }
 
-    public VisualElement CreateGUI()
+    public void CreateGUI()
     {
-        VisualElement grid = new();
-        grid.name = "ItemSlots";
-        grid.style.flexDirection = FlexDirection.Row;
-        grid.style.flexWrap = Wrap.Wrap;
+        name = "Grid";
+        style.flexDirection = FlexDirection.Row;
+        style.flexWrap = Wrap.Wrap;
 
-        GenerateRows(Rows, grid);
-
-        return grid;
+        GenerateRows(Rows);
     }
 
-    public void GenerateRows(int numberOfRows, VisualElement grid)
+    public void GenerateRows(int numberOfRows)
     {
         int totalSlots = Columns * numberOfRows;
         for (int i = 0; i < totalSlots; i++)
@@ -73,15 +70,20 @@ public class Grid : VisualElement
             slot.style.borderLeftColor = BorderColour;
             slot.style.borderRightColor = BorderColour;
 
-            grid.Add(slot);
+            slot.style.borderTopWidth = Border;
+            slot.style.borderRightWidth = Border;
+            slot.style.borderBottomWidth = Border;
+            slot.style.borderLeftWidth = Border;
+
+            Add(slot);
         }
-        RemoveDoubleBorders(grid);
+        RemoveDoubleBorders();
     }
-    private void RemoveDoubleBorders(VisualElement inventory)
+    private void RemoveDoubleBorders()
     {
-        for (int i = 0; i < inventory.childCount; i++)
+        for (int i = 0; i < childCount; i++)
         {
-            VisualElement slot = inventory[i];
+            VisualElement slot = this[i];
             slot.style.borderTopWidth = 0;
             slot.style.borderRightWidth = Border;
             slot.style.borderBottomWidth = Border;

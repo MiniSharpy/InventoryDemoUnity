@@ -19,7 +19,11 @@ public class Inventory : MonoBehaviour
             Grid grid = uiDocument.rootVisualElement.Q("Grid") as Grid;
             if (grid == null) { Debug.Log("Can't find grid!"); return; }
 
-            uiDocument.rootVisualElement.style.height = grid.resolvedStyle.height;
+            // Set size of scroll view, not entire thing, so that padding doesn't mess with the formatting.
+            var scrollView = uiDocument.rootVisualElement.Q("ScrollableGrid") as ScrollView;
+            if (scrollView == null) { Debug.Log("Can't find scroll view!"); return; }
+            scrollView.style.height = grid.resolvedStyle.height;
+
             grid.GenerateRows(3);
             uiDocument.rootVisualElement.UnregisterCallback<GeometryChangedEvent>(GeometryChangedCallback);
         }

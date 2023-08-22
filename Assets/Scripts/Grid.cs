@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 
 public class Grid : VisualElement
 {
@@ -10,9 +11,9 @@ public class Grid : VisualElement
         // Editor seems to output the incorrect values unless the following is true:
         // UXML attributes are lower-case and hyphen-separated, and name matches the variable as well as the property.
         UxmlIntAttributeDescription _columns = new UxmlIntAttributeDescription { name = "columns", defaultValue = 8 };
-        UxmlIntAttributeDescription _rows = new UxmlIntAttributeDescription { name = "rows", defaultValue = 14 };
+        UxmlIntAttributeDescription _rows = new UxmlIntAttributeDescription { name = "rows", defaultValue = 8 };
         UxmlColorAttributeDescription _slotColour = new UxmlColorAttributeDescription { name = "slot-colour", defaultValue = Color.grey };
-        UxmlIntAttributeDescription _border = new UxmlIntAttributeDescription { name = "border", defaultValue = 2 };
+        UxmlIntAttributeDescription _border = new UxmlIntAttributeDescription { name = "border", defaultValue = 2 }; // If this is too large, slots become rectangular...
         UxmlColorAttributeDescription _borderColour = new UxmlColorAttributeDescription { name = "border-colour", defaultValue = Color.black };
 
         public override IEnumerable<UxmlChildElementDescription> uxmlChildElementsDescription
@@ -47,6 +48,12 @@ public class Grid : VisualElement
         name = "Grid";
         style.flexDirection = FlexDirection.Row;
         style.flexWrap = Wrap.Wrap;
+        style.borderTopWidth = Border;
+        style.borderLeftWidth = Border;
+        style.borderBottomColor = BorderColour;
+        style.borderTopColor = BorderColour;
+        style.borderLeftColor = BorderColour;
+        style.borderRightColor = BorderColour;
 
         GenerateRows(Rows);
     }
@@ -70,33 +77,12 @@ public class Grid : VisualElement
             slot.style.borderLeftColor = BorderColour;
             slot.style.borderRightColor = BorderColour;
 
-            slot.style.borderTopWidth = Border;
-            slot.style.borderRightWidth = Border;
-            slot.style.borderBottomWidth = Border;
-            slot.style.borderLeftWidth = Border;
-
-            Add(slot);
-        }
-        RemoveDoubleBorders();
-    }
-    private void RemoveDoubleBorders()
-    {
-        for (int i = 0; i < childCount; i++)
-        {
-            VisualElement slot = this[i];
             slot.style.borderTopWidth = 0;
             slot.style.borderRightWidth = Border;
             slot.style.borderBottomWidth = Border;
             slot.style.borderLeftWidth = 0;
-            if (i < Columns) // If top row, have top border.
-            {
-                slot.style.borderTopWidth = Border;
-            }
 
-            if (i % Columns == 0) // If left row, have left border.
-            {
-                slot.style.borderLeftWidth = Border;
-            }
+            Add(slot);
         }
     }
 }

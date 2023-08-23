@@ -1,21 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Random = UnityEngine.Random;
 
 public class Grid : VisualElement
 {
     public new class UxmlFactory : UxmlFactory<Grid, UxmlTraits> { }
     public new class UxmlTraits : VisualElement.UxmlTraits
     {
-        // Editor seems to output the incorrect values unless the following is true:
-        // UXML attributes are lower-case and hyphen-separated, and name matches the variable as well as the property.
-        UxmlIntAttributeDescription _columns = new UxmlIntAttributeDescription { name = "columns", defaultValue = 8 };
-        UxmlIntAttributeDescription _rows = new UxmlIntAttributeDescription { name = "rows", defaultValue = 8 };
-        UxmlColorAttributeDescription _slotColour = new UxmlColorAttributeDescription { name = "slot-colour", defaultValue = Color.grey };
-        UxmlIntAttributeDescription _border = new UxmlIntAttributeDescription { name = "border", defaultValue = 2 }; // If this is too large, slots become rectangular...
-        UxmlColorAttributeDescription _borderColour = new UxmlColorAttributeDescription { name = "border-colour", defaultValue = Color.black };
-        UxmlColorAttributeDescription _backgroundColour = new UxmlColorAttributeDescription { name = "background-colour", defaultValue = Color.grey };
+        // Editor seems to output the incorrect values and be quite finicky, especially if the attribute description name isn't
+        // lower-case and hyphen-separated.
+        UxmlIntAttributeDescription _columns = new() { name = "columns", defaultValue = 8 };
+        UxmlIntAttributeDescription _rows = new() { name = "rows", defaultValue = 8 };
+        UxmlColorAttributeDescription _slotColour = new() { name = "slot-colour", defaultValue = Color.grey };
+        UxmlIntAttributeDescription _border = new() { name = "border", defaultValue = 2 }; // If this is too large, slots become rectangular.
+        UxmlColorAttributeDescription _borderColour = new() { name = "border-colour", defaultValue = Color.black };
+        UxmlColorAttributeDescription _backgroundColour = new() { name = "background-colour", defaultValue = Color.grey };
 
         public override IEnumerable<UxmlChildElementDescription> uxmlChildElementsDescription
         {
@@ -44,7 +43,7 @@ public class Grid : VisualElement
     public Color SlotColour { get; set; }
     public int Border { get; set; }
     public Color BorderColour { get; set; }
-    public Color BackgroundColour { get; set; } // Useful to help prevent obvious bleed through from elements rendered underneath.
+    public Color BackgroundColour { get; set; } // Useful to help prevent obvious bleed through from elements rendered underneath. More so when slots aren't randomly colours.
 
     public float SlotSize => childCount > 0 ? this[0].resolvedStyle.width : float.NaN;
 
@@ -72,13 +71,15 @@ public class Grid : VisualElement
             VisualElement slot = new();
             slot.name = "Slot";
 
-            slot.style.width = Length.Percent((1.0f / Columns) * 100);
+            slot.style.width = Length.Percent(100f / Columns);
             if (float.IsNaN(SlotSize))
             {
-                // Hack the height to be the same as the width. This falls about as the border increases, creating rectangular slots.
+                // Hack the height to be the same as the width. This is increasingly less accurate as the border increases, creating rectangular slots.
+                // This is mainly useful for a visual reference in the UI builder, the slots are made square once the width is actually resolved at
+                // runtime.
                 // https://forum.unity.com/threads/ui-builder-problems-with-scale-images.927032/#post-6067764
                 slot.style.height = 0;
-                slot.style.paddingTop = Length.Percent((1.0f / Columns) * 100);
+                slot.style.paddingTop = Length.Percent(100f / Columns);
             }
             else
             {

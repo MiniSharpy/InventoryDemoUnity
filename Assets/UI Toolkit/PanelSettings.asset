@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   themeUss: {fileID: -4733365628477956816, guid: 7f2ace3d0ba00c14d9403e6d7c5e3c71, type: 3}
   m_TargetTexture: {fileID: 0}
-  m_ScaleMode: 2
+  m_ScaleMode: 0
   m_ReferenceSpritePixelsPerUnit: 100
   m_Scale: 1
-  m_ReferenceDpi: 96
-  m_FallbackDpi: 96
+  m_ReferenceDpi: 128
+  m_FallbackDpi: 128
   m_ReferenceResolution: {x: 1920, y: 1080}
-  m_ScreenMatchMode: 2
+  m_ScreenMatchMode: 0
   m_Match: 0.5
   m_SortingOrder: 0
   m_TargetDisplay: 0

@@ -1,10 +1,10 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Template name="ScrollableGridTemplate" src="project://database/Assets/UI/ScrollableGridTemplate.uxml?fileID=9197481963319205126&amp;guid=69159193d464ffb409d2b0a7d7945446&amp;type=3#ScrollableGridTemplate" />
-    <ui:VisualElement name="Inventory" style="width: 1024px; height: auto; background-color: rgb(255, 0, 0); flex-direction: row; padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px;">
+    <ui:VisualElement name="Inventory" style="background-color: rgb(255, 0, 0); flex-direction: row; padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; width: 1024px;">
         <ui:VisualElement name="CharacterInformation" style="width: 100%; background-color: rgb(51, 51, 51);" />
         <ui:VisualElement name="PlayerEquipment" style="width: 100%; background-color: rgb(38, 38, 38);" />
         <ui:Instance template="ScrollableGridTemplate" name="ScrollableGridTemplate" style="width: 100%;">
-            <AttributeOverrides element-name="Grid" rows="13" border="8" />
+            <AttributeOverrides element-name="Grid" rows="13" border="0" columns="7" />
         </ui:Instance>
     </ui:VisualElement>
 </ui:UXML>

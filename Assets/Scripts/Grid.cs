@@ -45,13 +45,11 @@ public class Grid : VisualElement
     public Color BorderColour { get; set; }
     public Color BackgroundColour { get; set; } // Useful to help prevent obvious bleed through from elements rendered underneath. More so when slots aren't randomly colours.
 
-    public float SlotSize => childCount > 0 ? this[0].resolvedStyle.width : float.NaN;
+    public float SlotSize => childCount > 0 && this[0].childCount > 0 ? this[0][0].resolvedStyle.width : float.NaN;
 
     public void CreateGUI()
     {
         name = "Grid";
-        style.flexDirection = FlexDirection.Row;
-        style.flexWrap = Wrap.Wrap;
         style.borderTopWidth = Border;
         style.borderLeftWidth = Border;
         style.borderBottomColor = BorderColour;
@@ -59,46 +57,52 @@ public class Grid : VisualElement
         style.borderLeftColor = BorderColour;
         style.borderRightColor = BorderColour;
         style.backgroundColor = BackgroundColour;
-
         GenerateRows(Rows);
     }
 
     public void GenerateRows(int numberOfRows)
     {
-        int totalSlots = Columns * numberOfRows;
-        for (int i = 0; i < totalSlots; i++)
+        for (int i = 0; i < numberOfRows; i++)
         {
-            VisualElement slot = new();
-            slot.name = "Slot";
-
-            slot.style.width = Length.Percent(100f / Columns);
-            if (float.IsNaN(SlotSize))
+            VisualElement row = new();
+            row.name = "Row";
+            row.style.flexDirection = FlexDirection.Row;
+            for (int j = 0; j < Columns; j++)
             {
-                // Hack the height to be the same as the width. This is increasingly less accurate as the border increases, creating rectangular slots.
-                // This is mainly useful for a visual reference in the UI builder, the slots are made square once the width is actually resolved at
-                // runtime.
-                // https://forum.unity.com/threads/ui-builder-problems-with-scale-images.927032/#post-6067764
-                slot.style.height = 0;
-                slot.style.paddingTop = Length.Percent(100f / Columns);
+                VisualElement slot = new();
+                slot.name = "Slot";
+
+                slot.style.width = Length.Percent(100f / Columns);
+                if (float.IsNaN(SlotSize))
+                {
+                    // Hack the height to be the same as the width. This is increasingly less accurate as the border increases, creating rectangular slots.
+                    // This is mainly useful for a visual reference in the UI builder, the slots are made square once the width is actually resolved at
+                    // runtime.
+                    // https://forum.unity.com/threads/ui-builder-problems-with-scale-images.927032/#post-6067764
+                    slot.style.height = 0;
+                    slot.style.paddingTop = Length.Percent(100f / Columns);
+                }
+                else
+                {
+                    slot.style.height = SlotSize;
+                    slot.style.paddingTop = 0;
+                }
+
+                slot.style.backgroundColor = Random.ColorHSV(); // Just to make it easier to distinguish cells.
+
+                slot.style.borderBottomColor = BorderColour;
+                slot.style.borderTopColor = BorderColour;
+                slot.style.borderLeftColor = BorderColour;
+                slot.style.borderRightColor = BorderColour;
+
+                slot.style.borderTopWidth = 0;
+                slot.style.borderRightWidth = Border;
+                slot.style.borderBottomWidth = Border;
+                slot.style.borderLeftWidth = 0;
+
+                row.Add(slot);
             }
-            else
-            {
-                slot.style.height = SlotSize;
-            }
-
-            slot.style.backgroundColor = Random.ColorHSV(); // Just to make it easier to distinguish cells.
-
-            slot.style.borderBottomColor = BorderColour;
-            slot.style.borderTopColor = BorderColour;
-            slot.style.borderLeftColor = BorderColour;
-            slot.style.borderRightColor = BorderColour;
-
-            slot.style.borderTopWidth = 0;
-            slot.style.borderRightWidth = Border;
-            slot.style.borderBottomWidth = Border;
-            slot.style.borderLeftWidth = 0;
-
-            Add(slot);
+            Add(row);
         }
     }
 }

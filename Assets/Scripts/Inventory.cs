@@ -1,12 +1,10 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class Inventory : MonoBehaviour
 {
-    private List<Item> HeldItems = new();
-
-    private void OnEnable()
+    // Height should only be set once, and before any extra slots past the default have been added.
+    void Awake()
     {
         // Set height to the default grid's height so that a whole number of cells fit vertically.
         var uiDocument = GetComponent<UIDocument>();
@@ -21,7 +19,6 @@ public class Inventory : MonoBehaviour
         // Styling takes a moment to be resolved so use a callback function to be able to access
         // valid values when available.
         grid.RegisterCallback<GeometryChangedEvent>(MakeSlotsSquareAndSetScrollHeight);
-
 
         void MakeSlotsSquareAndSetScrollHeight(GeometryChangedEvent evt)
         {
@@ -40,6 +37,7 @@ public class Inventory : MonoBehaviour
                     grid[i][j].style.paddingTop = 0;
                 }
             }
+
             grid.UnregisterCallback<GeometryChangedEvent>(MakeSlotsSquareAndSetScrollHeight);
 
             // With the slots now square the scroll view's height needs to be set to limit the number of elements displayed.
@@ -51,10 +49,10 @@ public class Inventory : MonoBehaviour
             scrollView.schedule.Execute(() =>
             {
                 // Set size of scroll view, not entire inventory, so that padding doesn't mess with the formatting.
+                // Also relies on the grid containing all its own guttering and what not to perfectly fit vertically with scroll.
                 scrollView.style.height = grid.resolvedStyle.height;
                 grid.GenerateRows(3); // Test
-            }).ExecuteLater(10);
-
+            }).ExecuteLater(1);
         }
     }
 }

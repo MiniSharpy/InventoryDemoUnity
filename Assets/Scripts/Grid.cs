@@ -11,10 +11,8 @@ public class Grid : VisualElement
         // lower-case and hyphen-separated.
         UxmlIntAttributeDescription _columns = new() { name = "columns", defaultValue = 8 };
         UxmlIntAttributeDescription _rows = new() { name = "rows", defaultValue = 8 };
-        UxmlColorAttributeDescription _slotColour = new() { name = "slot-colour", defaultValue = Color.grey };
-        UxmlIntAttributeDescription _border = new() { name = "border", defaultValue = 2 }; // If this is too large, slots become rectangular.
-        UxmlColorAttributeDescription _borderColour = new() { name = "border-colour", defaultValue = Color.black };
-        UxmlColorAttributeDescription _backgroundColour = new() { name = "background-colour", defaultValue = Color.grey };
+        UxmlIntAttributeDescription _gutter = new() { name = "gutter", defaultValue = 2 };
+        UxmlColorAttributeDescription _gutterColour = new() { name = "gutter-colour", defaultValue = Color.black };
 
         public override IEnumerable<UxmlChildElementDescription> uxmlChildElementsDescription
         {
@@ -30,33 +28,24 @@ public class Grid : VisualElement
 
             grid.Columns = _columns.GetValueFromBag(attributeBag, creationContext);
             grid.Rows = _rows.GetValueFromBag(attributeBag, creationContext);
-            grid.SlotColour = _slotColour.GetValueFromBag(attributeBag, creationContext);
-            grid.Border = _border.GetValueFromBag(attributeBag, creationContext);
-            grid.BorderColour = _borderColour.GetValueFromBag(attributeBag, creationContext);
-            grid.BackgroundColour = _backgroundColour.GetValueFromBag(attributeBag, creationContext);
+            grid.Gutter = _gutter.GetValueFromBag(attributeBag, creationContext);
+            grid.GutterColour = _gutterColour.GetValueFromBag(attributeBag, creationContext);
             grid.CreateGUI();
         }
     }
 
     public int Columns { get; set; }
     public int Rows { get; set; }
-    public Color SlotColour { get; set; }
-    public int Border { get; set; }
-    public Color BorderColour { get; set; }
-    public Color BackgroundColour { get; set; } // Useful to help prevent obvious bleed through from elements rendered underneath. More so when slots aren't randomly colours.
+    public int Gutter { get; set; }
+    public Color GutterColour { get; set; }
 
     public float SlotSize => childCount > 0 && this[0].childCount > 0 ? this[0][0].resolvedStyle.width : float.NaN;
 
     public void CreateGUI()
     {
         name = "Grid";
-        style.borderTopWidth = Border;
-        style.borderLeftWidth = Border;
-        style.borderBottomColor = BorderColour;
-        style.borderTopColor = BorderColour;
-        style.borderLeftColor = BorderColour;
-        style.borderRightColor = BorderColour;
-        style.backgroundColor = BackgroundColour;
+        style.backgroundColor = GutterColour;
+
         GenerateRows(Rows);
     }
 
@@ -67,6 +56,9 @@ public class Grid : VisualElement
             VisualElement row = new();
             row.name = "Row";
             row.style.flexDirection = FlexDirection.Row;
+            row.style.marginBottom = Gutter;
+            row.style.marginLeft = Gutter;
+
             for (int j = 0; j < Columns; j++)
             {
                 VisualElement slot = new();
@@ -90,19 +82,16 @@ public class Grid : VisualElement
 
                 slot.style.backgroundColor = Random.ColorHSV(); // Just to make it easier to distinguish cells.
 
-                slot.style.borderBottomColor = BorderColour;
-                slot.style.borderTopColor = BorderColour;
-                slot.style.borderLeftColor = BorderColour;
-                slot.style.borderRightColor = BorderColour;
-
-                slot.style.borderTopWidth = 0;
-                slot.style.borderRightWidth = Border;
-                slot.style.borderBottomWidth = Border;
-                slot.style.borderLeftWidth = 0;
+                slot.style.marginRight = Gutter;
 
                 row.Add(slot);
             }
             Add(row);
+        }
+
+        if (childCount > 0) // Ensures correctly configured even if no rows were initially created.
+        {
+            this[0].style.marginTop = Gutter;
         }
     }
 }

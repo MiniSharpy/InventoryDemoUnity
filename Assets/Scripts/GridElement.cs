@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Grid : VisualElement
+public class GridElement : VisualElement
 {
-    public new class UxmlFactory : UxmlFactory<Grid, UxmlTraits> { }
+    public new class UxmlFactory : UxmlFactory<GridElement, UxmlTraits> { }
     public new class UxmlTraits : VisualElement.UxmlTraits
     {
         // Editor seems to output the incorrect values and be quite finicky, especially if the attribute description name isn't
@@ -13,6 +14,7 @@ public class Grid : VisualElement
         UxmlIntAttributeDescription _rows = new() { name = "rows", defaultValue = 8 };
         UxmlIntAttributeDescription _gutter = new() { name = "gutter", defaultValue = 2 };
         UxmlColorAttributeDescription _gutterColour = new() { name = "gutter-colour", defaultValue = Color.black };
+        UxmlColorAttributeDescription _slotColour = new() { name = "slot-colour", defaultValue = Color.grey };
 
         public override IEnumerable<UxmlChildElementDescription> uxmlChildElementsDescription
         {
@@ -22,15 +24,16 @@ public class Grid : VisualElement
         public override void Init(VisualElement visualElement, IUxmlAttributes attributeBag, CreationContext creationContext)
         {
             base.Init(visualElement, attributeBag, creationContext);
-            Grid grid = visualElement as Grid;
+            GridElement gridElement = visualElement as GridElement;
 
-            grid.Clear();
+            gridElement.Clear();
 
-            grid.Columns = _columns.GetValueFromBag(attributeBag, creationContext);
-            grid.Rows = _rows.GetValueFromBag(attributeBag, creationContext);
-            grid.Gutter = _gutter.GetValueFromBag(attributeBag, creationContext);
-            grid.GutterColour = _gutterColour.GetValueFromBag(attributeBag, creationContext);
-            grid.CreateGUI();
+            gridElement.Columns = _columns.GetValueFromBag(attributeBag, creationContext);
+            gridElement.Rows = _rows.GetValueFromBag(attributeBag, creationContext);
+            gridElement.Gutter = _gutter.GetValueFromBag(attributeBag, creationContext);
+            gridElement.GutterColour = _gutterColour.GetValueFromBag(attributeBag, creationContext);
+            gridElement.SlotColour = _slotColour.GetValueFromBag(attributeBag, creationContext);
+            gridElement.CreateGUI();
         }
     }
 
@@ -38,18 +41,19 @@ public class Grid : VisualElement
     public int Rows { get; set; }
     public int Gutter { get; set; }
     public Color GutterColour { get; set; }
+    public Color SlotColour { get; set; }
 
     public float SlotSize => childCount > 0 && this[0].childCount > 0 ? this[0][0].resolvedStyle.width : float.NaN;
 
     public void CreateGUI()
     {
-        name = "Grid";
+        name = "GridElement";
         style.backgroundColor = GutterColour;
 
-        GenerateRows(Rows);
+        AddRows(Rows);
     }
 
-    public void GenerateRows(int numberOfRows)
+    public void AddRows(int numberOfRows)
     {
         for (int i = 0; i < numberOfRows; i++)
         {
@@ -80,7 +84,7 @@ public class Grid : VisualElement
                     slot.style.paddingTop = 0;
                 }
 
-                slot.style.backgroundColor = Random.ColorHSV(); // Just to make it easier to distinguish cells.
+                slot.style.backgroundColor = SlotColour; // Random.ColorHSV(); // Just to make it easier to distinguish cells
 
                 slot.style.marginRight = Gutter;
 
@@ -93,5 +97,53 @@ public class Grid : VisualElement
         {
             this[0].style.marginTop = Gutter;
         }
+    }
+
+    public VisualElement GetChild(int index)
+    {
+        int x = index % Columns;
+        int y = index / Columns;
+        return this[y][x];
+    }
+
+    public Vector2Int GetSlotIndex(VisualElement slot)
+    {
+        VisualElement row = slot.parent;
+        VisualElement grid = slot.parent.parent;
+        int y = grid.IndexOf(row);
+        int x = row.IndexOf(slot);
+        return new(x, y);
+    }
+
+    public void DisplayItem(Item item, int index)
+    {
+        VisualElement slot = GetChild(index);
+        if (item == null)
+        {
+            slot.style.backgroundImage = null;
+            return;
+        }
+
+        if (item.Icon != null)
+        {
+            slot.style.backgroundImage = item.Icon;
+        }
+        else
+        {
+            slot.style.backgroundImage = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Textures/Icon.png");
+        }
+    }
+
+    public void DisplayedSelected(int index)
+    {
+        VisualElement slot = GetChild(index);
+        slot.style.borderBottomWidth = 2;
+        slot.style.borderTopWidth = 2;
+        slot.style.borderLeftWidth = 2;
+        slot.style.borderRightWidth = 2;
+        slot.style.borderBottomColor = Color.white;
+        slot.style.borderTopColor = Color.white;
+        slot.style.borderLeftColor = Color.white;
+        slot.style.borderRightColor = Color.white;
     }
 }

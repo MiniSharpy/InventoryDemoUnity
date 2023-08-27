@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <ui:ScrollView vertical-scroller-visibility="AlwaysVisible" name="ScrollableGrid">
-        <Grid name="Grid" />
+    <ui:ScrollView vertical-scroller-visibility="AlwaysVisible" name="ScrollableGrid" horizontal-scroller-visibility="Hidden">
+        <GridElement name="GridElement" />
     </ui:ScrollView>
 </ui:UXML>

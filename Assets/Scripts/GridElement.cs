@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -65,85 +64,33 @@ public class GridElement : VisualElement
 
             for (int j = 0; j < Columns; j++)
             {
-                VisualElement slot = new();
-                slot.name = "Slot";
-
-                slot.style.width = Length.Percent(100f / Columns);
-                if (float.IsNaN(SlotSize))
-                {
-                    // Hack the height to be the same as the width. This is increasingly less accurate as the border increases, creating rectangular slots.
-                    // This is mainly useful for a visual reference in the UI builder, the slots are made square once the width is actually resolved at
-                    // runtime.
-                    // https://forum.unity.com/threads/ui-builder-problems-with-scale-images.927032/#post-6067764
-                    slot.style.height = 0;
-                    slot.style.paddingTop = Length.Percent(100f / Columns);
-                }
-                else
-                {
-                    slot.style.height = SlotSize;
-                    slot.style.paddingTop = 0;
-                }
-
-                slot.style.backgroundColor = SlotColour; // Random.ColorHSV(); // Just to make it easier to distinguish cells
-
-                slot.style.marginRight = Gutter;
-
+                SlotElement slot = new(this);
                 row.Add(slot);
             }
             Add(row);
         }
 
-        if (childCount > 0) // Ensures correctly configured even if no rows were initially created.
+        // Ensures there's the top gutter. Best do every time in case this is the first time rows are added.
+        if (childCount > 0)
         {
             this[0].style.marginTop = Gutter;
         }
     }
 
-    public VisualElement GetChild(int index)
+    public SlotElement GetChild(int index)
     {
         int x = index % Columns;
         int y = index / Columns;
-        return this[y][x];
+        return (SlotElement)this[y][x]; // Can be certain of the cast.
     }
 
-    public Vector2Int GetSlotIndex(VisualElement slot)
+    public int GetSlotIndex(VisualElement slot)
     {
         VisualElement row = slot.parent;
         VisualElement grid = slot.parent.parent;
         int y = grid.IndexOf(row);
         int x = row.IndexOf(slot);
-        return new(x, y);
-    }
 
-    public void DisplayItem(Item item, int index)
-    {
-        VisualElement slot = GetChild(index);
-        if (item == null)
-        {
-            slot.style.backgroundImage = null;
-            return;
-        }
-
-        if (item.Icon != null)
-        {
-            slot.style.backgroundImage = item.Icon;
-        }
-        else
-        {
-            slot.style.backgroundImage = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Textures/Icon.png");
-        }
-    }
-
-    public void DisplayedSelected(int index)
-    {
-        VisualElement slot = GetChild(index);
-        slot.style.borderBottomWidth = 2;
-        slot.style.borderTopWidth = 2;
-        slot.style.borderLeftWidth = 2;
-        slot.style.borderRightWidth = 2;
-        slot.style.borderBottomColor = Color.white;
-        slot.style.borderTopColor = Color.white;
-        slot.style.borderLeftColor = Color.white;
-        slot.style.borderRightColor = Color.white;
+        return Columns * y + x;
     }
 }

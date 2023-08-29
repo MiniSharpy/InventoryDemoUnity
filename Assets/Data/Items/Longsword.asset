@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 524d5813e40b2af458d8c2e1d9778d5b, type: 3}
   m_Name: Longsword
   m_EditorClassIdentifier: 
-  Icon: {fileID: 0}
+  Icon: {fileID: 7433338533053954386, guid: 7f2ace3d0ba00c14d9403e6d7c5e3c71, type: 3}
   Name: Longsword
   Description: "Longswords can be one-edged or two\u2011edged swords. Their blades
     are heavy and they\u2019re between 3 and 4 feet in length. "

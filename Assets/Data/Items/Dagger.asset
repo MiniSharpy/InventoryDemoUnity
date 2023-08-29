@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 524d5813e40b2af458d8c2e1d9778d5b, type: 3}
   m_Name: Dagger
   m_EditorClassIdentifier: 
-  Icon: {fileID: 0}
+  Icon: {fileID: 2800000, guid: 98498a9e75809b84380ce0413b353612, type: 3}
   Name: Dagger
   Description: This small, bladed weapon is held in one hand and used to stab a creature
     in close combat. It can also be thrown.

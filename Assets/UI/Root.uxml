@@ -1,6 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="CharacterInventory" src="project://database/Assets/UI/CharacterInventory.uxml?fileID=9197481963319205126&amp;guid=149549a8ff00ac7459b5516577894198&amp;type=3#CharacterInventory" />
-    <ui:VisualElement name="Root" style="flex-grow: 1; align-items: center; justify-content: space-around; align-self: auto;">
-        <ui:Instance template="CharacterInventory" name="CharacterInventory" />
-    </ui:VisualElement>
-</ui:UXML>

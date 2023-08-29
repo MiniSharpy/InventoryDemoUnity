@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="ScrollableGridTemplate" src="project://database/Assets/UI/ScrollableGridTemplate.uxml?fileID=9197481963319205126&amp;guid=69159193d464ffb409d2b0a7d7945446&amp;type=3#ScrollableGridTemplate" />
+    <ui:VisualElement name="Chest" style="padding-top: 16px; padding-right: 16px; padding-bottom: 16px; padding-left: 16px; background-color: rgb(255, 0, 0); align-items: center; justify-content: space-between; align-self: flex-start;">
+        <ui:VisualElement name="Icon" style="background-image: url(&apos;project://database/Assets/Textures/Icon.png?fileID=2800000&amp;guid=39bfaa1dbac7cd04ba5149c7b73803b7&amp;type=3#Icon&apos;); -unity-background-scale-mode: scale-to-fit; width: 128px; height: 128px;" />
+        <ui:Instance template="ScrollableGridTemplate" name="ScrollableGridTemplate" style="align-self: stretch; width: 330px;">
+            <AttributeOverrides element-name="GridElement" columns="8" rows="8" />
+        </ui:Instance>
+    </ui:VisualElement>
+</ui:UXML>
